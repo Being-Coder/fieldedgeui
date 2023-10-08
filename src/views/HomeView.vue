@@ -2,7 +2,7 @@
   <div class="customer-view">
     <div class="customer-div">
       <DataTable
-        :value="products"
+        :value="allCustomersList"
         stripedRows
         class="p-datatable-sm"
         tableStyle="min-width: 50rem"
@@ -21,14 +21,14 @@
         </Column>
         <Column header="Actions" :exportable="false" style="min-width: 8rem">
           <template #body="slotProps">
-            <a class="Edit" @click="editProduct(slotProps.data)">Edit</a> |
-            <a class="Delete" @click="editProduct(slotProps.data)">Delete</a>
+            <a class="Edit" @click="editCustomer(slotProps)">Edit</a> |
+            <a class="Delete" @click="deleteCustomer(slotProps)">Delete</a>
           </template>
         </Column>
       </DataTable>
     </div>
     <div class="btn-div">
-      <button class="anc-btn">Add New Customer</button>
+      <button class="anc-btn" @click="addNewCustomer()">Add New Customer</button>
     </div>
   </div>
 </template>
@@ -43,10 +43,11 @@ export default {
     DataTable,
     Column,
   },
-  created() {
+  mounted() {
     CustomerService.getAllCustomers()
       .then((response) => {
-        this.products = response.data;
+        this.allCustomersList = response.data;
+        this.$store.commit('ALL_CUST_LIST',this.allCustomersList)        
       })
       .catch((error) => {
         console.log(error);
@@ -55,7 +56,9 @@ export default {
   data() {
     return {
       edit: "Edit",
-      products: [],
+      allCustomersList: this.$store.state.AllCustomersList,
+      customer: {},
+      deleteRespMsg: [],
     };
   },
   methods: {
@@ -65,6 +68,33 @@ export default {
         currency: "USD",
       });
     },
+    deleteCustomer(custToDelete) {
+      var response = confirm(
+        "Are you sure ? you want to delete customer with id = " +
+          custToDelete.data.id
+      );
+      if (response) {
+        CustomerService.deleteCustomer(custToDelete.data.id)
+          .then((response) => {
+            this.deleteRespMsg = response.data;
+            this.allCustomersList = response.data.customers.result
+            this.$store.commit('ALL_CUST_LIST',this.allCustomersList)        
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        return false;
+      }
+    },
+    editCustomer(custToEdit) {
+      this.customer = custToEdit.data;
+      var id = custToEdit.data.id;
+      this.$router.push({ name: 'edit', params: { id } });
+    },
+    addNewCustomer(){
+        this.$router.push("add");
+    } 
   },
 };
 </script>
@@ -74,7 +104,7 @@ export default {
   .customer-div {
     margin-bottom: 50px;
     .Edit,
-    .Delete{
+    .Delete {
       cursor: pointer;
     }
   }
@@ -89,7 +119,7 @@ export default {
       font-size: 14px;
       font-weight: 700;
     }
-    .anc-btn:hover{
+    .anc-btn:hover {
       cursor: pointer;
       box-shadow: 2px 2px 0 0 grey;
     }
