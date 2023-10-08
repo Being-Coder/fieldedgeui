@@ -13,26 +13,38 @@
         </div>
         <div class="field">
           <label class="label" for="email">Email :</label>
-          <input class="input" type="text" v-model="newCustomer.email" />
+          <input
+            :class="{ 'email-error': newCustomer.email == '' && this.add }"
+            class="input"
+            type="email"
+            v-model="newCustomer.email"
+          />
         </div>
         <div class="field">
           <label class="label" for="phone">Phone_Number :</label>
-          <input class="input" type="text" v-model="newCustomer.phone_number"/>
+          <input class="input" type="text" v-model="newCustomer.phone_number" />
         </div>
         <div class="field">
           <label class="label" for="countrycode">Country_code :</label>
-          <input class="input" type="text" v-model="newCustomer.country_code"/>
+          <input class="input" type="text" v-model="newCustomer.country_code" />
         </div>
         <div class="field">
           <label class="label" for="gender">Gender :</label>
-          <input class="input" type="text" v-model="newCustomer.gender"/>
+          <input class="input" type="text" v-model="newCustomer.gender" />
         </div>
         <div class="field">
           <label class="label" for="balance">Balance :</label>
-          <input class="input" type="text" v-model="newCustomer.balance"/>
+          <input class="input" type="text" v-model="newCustomer.balance" />
         </div>
       </div>
-      <button type="submit" value="submit" class="button" @click="addNewCustomer">Add</button>
+      <button
+        type="submit"
+        value="submit"
+        class="button"
+        @click="addNewCustomer"
+      >
+        Add
+      </button>
     </form>
   </div>
 </template>
@@ -41,49 +53,49 @@ import CustomerService from "../services/CustomerService.js";
 export default {
   name: "AddView",
   components: {},
-  data(){
-    return{
-        newCustomer:{
-          firstname:"",
-          lastname:"",
-          email:"",
-          phone_number:"",
-          country_code:"",
-          gender:"",
-          balance:""
-        },
-        allCustomersList:[],
-    }
+  data() {
+    return {
+      add: false,
+      newCustomer: {
+        firstname: "",
+        lastname: "",
+        email: "",
+        phone_number: "",
+        country_code: "",
+        gender: "",
+        balance: "",
+      },
+      allCustomersList: [],
+    };
   },
-  methods:{
-    addNewCustomer(){
-        if(this.newCustomer.email == '')
-        {
-          return false;
-        }
-      
-        CustomerService.addNewCustomer(this.newCustomer)
-          .then((response) => {
-            this.deleteRespMsg = response.data;
-            this.allCustomersList = response.data.customers.result
-            this.$store.commit('ALL_CUST_LIST',this.allCustomersList)
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-        
-        this.newCustomer={
-          firstname:"",
-          lastname:"",
-          email:"",
-          phone_number:"",
-          country_code:"",
-          gender:"",
-          balance:0
-        }
-        this.$router.push("/")          
-    }
-  }
+  methods: {
+    addNewCustomer() {
+      this.add = true;
+      if (this.newCustomer.email == "") {
+        return false;
+      }
+      CustomerService.addNewCustomer(this.newCustomer)
+        .then((response) => {
+          this.deleteRespMsg = response.data;
+          this.allCustomersList = response.data.customers.result;
+          this.$store.commit("ALL_CUST_LIST", this.allCustomersList);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      this.newCustomer = {
+        firstname: "",
+        lastname: "",
+        email: "",
+        phone_number: "",
+        country_code: "",
+        gender: "",
+        balance: 0,
+      };
+      this.$router.push("/");
+    },
+  },
 };
 </script>
 <style lang="scss">
@@ -98,6 +110,9 @@ export default {
       display: flex;
       justify-content: space-between;
       margin-top: 2%;
+      input:focus-visible {
+        outline: none;
+      }
       .label {
         font-family: "Courier New", Courier, monospace;
         font-weight: 700;
@@ -109,17 +124,25 @@ export default {
         border-radius: 5px;
         height: 30px;
       }
+      .email-error {
+        border: 1px solid red;
+      }
     }
   }
-
   .button {
     height: 40px;
     width: 100px;
     background-color: #93c3e9;
-    border: 1px solid gray;
+    border: 1px solid grey;
+    font-size: 14px;
+    font-weight: 700;
     border-radius: 5px;
     margin-top: 3%;
     margin-left: 30%;
+  }
+  .button:hover {
+    cursor: pointer;
+    box-shadow: 2px 2px 0 0 grey;
   }
 }
 </style>

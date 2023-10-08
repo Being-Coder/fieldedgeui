@@ -13,7 +13,7 @@
         </div>
         <div class="field">
           <label class="label" for="email">Email :</label>
-          <input class="input" type="text" v-model="custToEdit.email" />
+          <input :class="{ 'email-error': custToEdit.email == ''}" class="input" type="email" v-model="custToEdit.email" />
         </div>
         <div class="field">
           <label class="label" for="phone">Phone_Number :</label>
@@ -105,6 +105,9 @@ export default {
       display: flex;
       justify-content: space-between;
       margin-top: 2%;
+      input:focus-visible {
+        outline: none;
+      }
       .label {
         font-family: "Courier New", Courier, monospace;
         font-weight: 700;
@@ -116,17 +119,25 @@ export default {
         border-radius: 5px;
         height: 30px;
       }
+      .email-error {
+        border: 1px solid red;
+      }      
     }
   }
-
-  .button {
-    height: 40px;
-    width: 100px;
-    background-color: #93c3e9;
-    border: 1px solid gray;
-    border-radius: 5px;
-    margin-top: 3%;
-    margin-left: 30%;
-  }
+    .button {
+      height: 40px;
+      width: 100px;
+      background-color: #93c3e9;
+      border: 1px solid grey;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 5px;
+      margin-top: 3%;
+      margin-left: 30%;      
+    }
+    .button:hover {
+      cursor: pointer;
+      box-shadow: 2px 2px 0 0 grey;
+    }
 }
 </style>

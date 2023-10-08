@@ -10,7 +10,11 @@
         <Column field="id" header="CustomerId"></Column>
         <Column field="firstname" header="Firstname"></Column>
         <Column field="lastname" header="Lastname"></Column>
-        <Column field="email" header="Email"></Column>
+        <Column field="email" header="Email">
+        <template #body="slotProps">
+          <a :href="slotProps.data.email" v-text="slotProps.data.email" />
+        </template>
+        </Column>   
         <Column field="phone_Number" header="Phone_Number"></Column>
         <Column field="country_Code" header="Country_code"></Column>
         <Column field="gender" header="Gender"></Column>
@@ -118,6 +122,7 @@ export default {
       border: 1px solid grey;
       font-size: 14px;
       font-weight: 700;
+      border-radius: 5px;
     }
     .anc-btn:hover {
       cursor: pointer;
